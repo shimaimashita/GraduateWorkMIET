@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Personal application
-    'asking.apps.AskingConfig'
-    'uploader.apps.UploaderConfig'
+    'asking.apps.AskingConfig',
+    'uploader'
 ]
 
 MIDDLEWARE = [
