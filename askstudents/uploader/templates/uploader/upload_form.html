@@ -1,16 +1,23 @@
-<div style="padding:40px;margin:40px;border:1px solid #ccc">
-    <h1>Django File Upload</h1>
+{% extends "new_generic.html" %}
+{% block content %}
+ <div class="t005__text t-text t-text_md" style="" field="text">
+    <h1>Загрузить данные</h1>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit">Submit</button>
+      <button type="submit">Подтвердить</button>
     </form><hr>
     <ul>
     {% for document in documents %}
         <li>
             <a href="{{ document.upload_file.url }}">{{ document.upload_file.name }}</a>
-            <small>({{ document.upload_file.size|filesizeformat }}) - {{document.upload_date}}</small>
+            <small>({{ document.upload_file.size|filesizeformat }})}</small>
         </li>
+    {% endfor %}
+    <h4>Последний документ: </h4>
+    {% for str in result_str %}
+        <p>({{ str }})
     {% endfor %}
     </ul>
 </div>
+ {% endblock %}
