@@ -21,7 +21,7 @@ from django.urls import path
 from django.urls import include
 from django.views.generic import RedirectView
 
-from uploader import views as uploader_views
+from asking import views as asking_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,6 +38,6 @@ urlpatterns += [
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += [
-    path('uploader/', uploader_views.UploadView.as_view(), name='fileupload'),
+    path('asking/upload', asking_views.UploadView.as_view(), name='fileupload'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

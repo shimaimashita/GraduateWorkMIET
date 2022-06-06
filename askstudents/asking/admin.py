@@ -15,7 +15,7 @@ class MailingAdmin(admin.ModelAdmin):
 
 @admin.register(Institute)
 class InstituteAdmin(admin.ModelAdmin):
-    list_display = ('pk_institute', 'institute_name')
+    list_display = ('institute_name',)
 
 
 @admin.register(Faculty)

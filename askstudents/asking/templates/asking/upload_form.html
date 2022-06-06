@@ -1,4 +1,4 @@
-{% extends "new_generic.html" %}
+{% extends "../new_generic.html" %}
 {% block content %}
  <div class="t005__text t-text t-text_md" style="" field="text">
     <h1>Загрузить данные</h1>
@@ -15,6 +15,6 @@
         </li>
     {% endfor %}
     </ul>
-    <h1>Осталось непроверенных форм {{ num_of_completed }}</h1>
+    <h3>Осталось непроверенных форм {{ num_of_completed }}</h3>
 </div>
  {% endblock %}

@@ -1,0 +1,8 @@
+{% extends "../new_generic.html" %}
+{% block content %}
+    <form method="POST">
+    {{ form.as_p }}
+        {% csrf_token %}
+    <button type="submit">Сохранить</button>
+    </form>
+{% endblock %}

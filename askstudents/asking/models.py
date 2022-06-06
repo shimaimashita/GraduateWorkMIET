@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from django.db import models
@@ -8,7 +9,28 @@ class Question(models.Model):
     """Model representing a question."""
     pk_question = models.UUIDField(primary_key=True, default=uuid.uuid4,
                                    help_text='Unique ID for this particular question')
-    question = models.TextField(max_length=1000, help_text='Enter a question')
+    question = models.TextField(max_length=1000, help_text='Enter a question', default="")
+    ACTIVE_STATUS = (
+        ('y', 'Yes'),
+        ('n', 'No'),
+    )
+
+    employed = models.CharField(
+        max_length=1,
+        choices=ACTIVE_STATUS,
+        blank=True,
+        default='n',
+    )
+
+    studying = models.CharField(
+        max_length=1,
+        choices=ACTIVE_STATUS,
+        blank=True,
+        default='n',
+    )
+
+    year = models.DateField(default=datetime.date.today())
+
 
     def __str__(self):
         """String for representing the Model object."""
@@ -22,20 +44,7 @@ class Question(models.Model):
 
 class Mailing(models.Model):
     pk_mailing = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    question = models.ManyToManyField('Question')
     mailing_date = models.DateField()
-    ACTIVE_STATUS = (
-        ('a', 'Active'),
-        ('i', 'Inactive'),
-    )
-
-    status = models.CharField(
-        max_length=1,
-        choices=ACTIVE_STATUS,
-        blank=True,
-        default='i',
-    )
-    institute = models.ForeignKey('Institute', on_delete=models.RESTRICT)
 
     class Meta:
         ordering = ['-mailing_date']
@@ -52,10 +61,12 @@ class Mailing(models.Model):
     def get_status(self):
         pass
 
+    def get_year(self):
+        return self.mailing_date.strftime('%Y')
+
 
 class Institute(models.Model):
-    pk_institute = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    institute_name = models.CharField(max_length=30)
+    institute_name = models.CharField(primary_key=True, max_length=30)
 
     class Meta:
         ordering = ['-institute_name']
@@ -65,8 +76,7 @@ class Institute(models.Model):
 
 
 class Faculty(models.Model):
-    pk_faculty = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    faculty_name = models.CharField(max_length=30)
+    faculty_name = models.CharField(primary_key=True, max_length=30)
     institute = models.ForeignKey('Institute', on_delete=models.RESTRICT)
 
     class Meta:
@@ -83,8 +93,7 @@ class Faculty(models.Model):
 
 
 class Group(models.Model):
-    pk_group = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    group_name = models.CharField(max_length=30)
+    group_name = models.CharField(primary_key=True, max_length=30)
     faculty = models.ForeignKey('Faculty', on_delete=models.RESTRICT)
 
     def __str__(self):
@@ -92,33 +101,6 @@ class Group(models.Model):
 
     def get_absolute_url(self):
         return reverse('group-detail', args=[str(self.pk_group)])
-
-
-class Student(models.Model):
-    pk_student = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    group = models.ForeignKey('Group', on_delete=models.RESTRICT)
-    status = models.CharField(max_length=30)
-
-    STUDY_STATUS = (
-        ('s', 'Study'),
-        ('g', 'Graduate'),
-    )
-
-    status = models.CharField(
-        max_length=1,
-        choices=STUDY_STATUS,
-        blank=True,
-        default='s',
-    )
-
-    mail = models.CharField(max_length=50)
-    graduate_year = models.DateField()
-
-    def get_absolute_url(self):
-        return reverse('student-detail', args=[str(self.pk_student)])
-
-    def __str__(self):
-        return f'{self.group} {self.status}'
 
 
 class Result(models.Model):
@@ -142,6 +124,40 @@ class Result(models.Model):
 
     def print_all_mailing(self):
         return ', '.join(mailing.mailing_date for mailing in self.mailing.all()[:4])
+
+
+class Student(models.Model):
+    pk_student = models.BigAutoField(primary_key=True)
+    group = models.ForeignKey('Group', on_delete=models.RESTRICT)
+    status = models.CharField(max_length=30)
+
+    STUDY_STATUS = (
+        ('s', 'Study'),
+        ('g', 'Graduate'),
+    )
+
+    status = models.CharField(
+        max_length=1,
+        choices=STUDY_STATUS,
+        blank=True,
+        default='s',
+    )
+
+    mail = models.CharField(max_length=50)
+    graduate_year = models.DateField(default=datetime.date.today())
+
+    def get_absolute_url(self):
+        return reverse('student-detail', args=[str(self.pk_student)])
+
+    def __str__(self):
+        return f'{self.group} {self.status}'
+
+
+class Upload(models.Model):
+    upload_file = models.FileField()
+    upload_date = models.DateTimeField(auto_now_add=True)
+    file_checked = models.BooleanField(default=False)
+
 
 # class Book(models.Model):
 #     """Model representing a book (but not a specific copy of a book)."""
